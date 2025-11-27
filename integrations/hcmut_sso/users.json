@@ -1,0 +1,125 @@
+{
+  "users": [
+    {
+      "username": "s2310001",
+      "password": "123456",
+      "fullName": "Nguyen Van A",
+      "role": "student"
+    },
+    {
+      "username": "s2310002",
+      "password": "123456",
+      "fullName": "Tran Thi B",
+      "role": "student"
+    },
+    {
+      "username": "s2310003",
+      "password": "123456",
+      "fullName": "Le Minh C",
+      "role": "student"
+    },
+    {
+      "username": "s2310004",
+      "password": "123456",
+      "fullName": "Pham Thanh D",
+      "role": "student"
+    },
+    {
+      "username": "s2310005",
+      "password": "123456",
+      "fullName": "Vo Quang E",
+      "role": "student"
+    },
+    {
+      "username": "s2310006",
+      "password": "123456",
+      "fullName": "Dang Gia B",
+      "role": "student"
+    },
+    {
+      "username": "s2310007",
+      "password": "123456",
+      "fullName": "Hoang Thi G",
+      "role": "student"
+    },
+    {
+      "username": "s2310008",
+      "password": "123456",
+      "fullName": "Pham Van H",
+      "role": "student"
+    },
+    {
+      "username": "s2310009",
+      "password": "123456",
+      "fullName": "Bui Quynh I",
+      "role": "student"
+    },
+    {
+      "username": "s2310010",
+      "password": "123456",
+      "fullName": "Nguyen Hoang J",
+      "role": "student"
+    },
+
+    {
+      "username": "tutor001",
+      "password": "abcd1234",
+      "fullName": "Tutor Nguyen",
+      "role": "tutor"
+    },
+    {
+      "username": "tutor002",
+      "password": "abcd1234",
+      "fullName": "Tutor Tran",
+      "role": "tutor"
+    },
+    {
+      "username": "tutor003",
+      "password": "abcd1234",
+      "fullName": "Tutor Le",
+      "role": "tutor"
+    },
+    {
+      "username": "tutor004",
+      "password": "abcd1234",
+      "fullName": "Tutor Pham",
+      "role": "tutor"
+    },
+    {
+      "username": "tutor005",
+      "password": "abcd1234",
+      "fullName": "Tutor Vo",
+      "role": "tutor"
+    },
+    {
+      "username": "tutor006",
+      "password": "abcd1234",
+      "fullName": "Tutor Dang",
+      "role": "tutor"
+    },
+    {
+      "username": "tutor007",
+      "password": "abcd1234",
+      "fullName": "Tutor Hoang",
+      "role": "tutor"
+    },
+    {
+      "username": "tutor008",
+      "password": "abcd1234",
+      "fullName": "Tutor Bui",
+      "role": "tutor"
+    },
+    {
+      "username": "tutor009",
+      "password": "abcd1234",
+      "fullName": "Tutor Do",
+      "role": "tutor"
+    },
+    {
+      "username": "tutor010",
+      "password": "abcd1234",
+      "fullName": "Tutor Truong",
+      "role": "tutor"
+    }
+  ]
+}

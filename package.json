@@ -17,5 +17,8 @@
   "bugs": {
     "url": "https://github.com/HoangTan2004/tutor-support-system/issues"
   },
-  "homepage": "https://github.com/HoangTan2004/tutor-support-system#readme"
+  "homepage": "https://github.com/HoangTan2004/tutor-support-system#readme",
+  "dependencies": {
+    "react-router-dom": "^7.9.6"
+  }
 }

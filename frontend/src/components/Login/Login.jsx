@@ -61,7 +61,16 @@ export default function LoginBox({ user, setUser }) {
               placeholder="Nhập mật khẩu"
             />
 
-            <a href="#" className="forgot-link">Quên mật khẩu?</a>
+            <a
+                href="/forgot"
+                onClick={(e) => {
+                    e.preventDefault();   // ngăn reload
+                    navigate("/forgot");
+                }}
+                className="forgot-link"
+                >
+                Quên mật khẩu?
+            </a>
 
             <button type="submit" className="login-btn" disabled={!username || !password}>Log in</button>
           </form>

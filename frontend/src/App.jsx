@@ -7,6 +7,8 @@ import Footer from './components/Footer/Footer';
 import HomeContent from "./components/HomeContent/HomeContent";
 import Login from './components/Login/Login';
 import HomeAuthenticated from "./components/HomeAuthenticated/HomeAuthenticated";
+import ForgotPassword from './components/ForgotPassword/ForgotPassword';
+import UserProfile from "./components/UserProfile/UserProfile";
 
 const App = () => {
   const [user, setUser] = useState(null);
@@ -46,7 +48,9 @@ const App = () => {
           <Routes>
             <Route path="/" element={<HomeContent />} />
             <Route path="/login" element={<Login user={user} setUser={setUser} />} />
+            <Route path="/forgot" element={<ForgotPassword />} />
             <Route path="/home" element={user ? <HomeAuthenticated username={user} /> : <Navigate to="/login" />} />
+            <Route path="/userprofile" element={<UserProfile />} />
             <Route path="*" element={<Navigate to={user ? "/home" : "/login"} />} />
           </Routes>
         </div>

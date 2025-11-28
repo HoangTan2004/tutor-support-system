@@ -1,26 +1,19 @@
-import fs from "fs";
-import path from "path";
-import { fileURLToPath } from "url";
-
-// Fix directory resolution since ES modules don't have __dirname
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-const usersPath = path.join(__dirname, "users.json");
-const usersDB = JSON.parse(fs.readFileSync(usersPath, "utf-8"));
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import { v4 as uuidv4 } from "uuid";
 
+// --- THAY ĐỔI 1: Import hàm xác thực từ DataCore ---
+// Lưu ý: Đường dẫn import phải chính xác tương đối với vị trí file server.js
+import { verifyUserCredentials } from "../hcmut_datacore/client.js";
+
 const app = express();
 const PORT = 5001;
 
-// For demo:
 const ALLOWED_ORIGINS = ["http://localhost:4000", "http://localhost:5173"];
 
-// In-memory ticket store (lost when server restarts – OK for project)
-const tickets = new Map(); // ticket -> { username, service, createdAt }
+// In-memory ticket store
+const tickets = new Map();
 
 app.use(
   cors({
@@ -32,16 +25,15 @@ app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-// GET /sso/login?service=...
+// GET /sso/login (Giữ nguyên giao diện HTML cũ)
 app.get("/sso/login", (req, res) => {
   const service = req.query.service;
   if (!service) {
     return res.status(400).send("Missing service URL");
   }
-
-  // Simple HTML login page (you can style this to look like HCMUT SSO)
+  // ... (Code HTML giữ nguyên như cũ)
   res.send(`
-    <!DOCTYPE html>
+<!DOCTYPE html>
     <html>
     <head>
       <title>Central Authentication Service</title>
@@ -72,42 +64,40 @@ app.get("/sso/login", (req, res) => {
   `);
 });
 
-// POST /sso/authenticate
-app.post("/sso/authenticate", (req, res) => {
+// --- THAY ĐỔI 2: Xử lý đăng nhập bằng DataCore (Async) ---
+app.post("/sso/authenticate", async (req, res) => {
   const { username, password, service } = req.body;
 
   if (!service) return res.status(400).send("Missing service URL");
 
-  const users = usersDB.users;
+  try {
+    // Gọi sang DataCore để kiểm tra user
+    const user = await verifyUserCredentials(username, password);
 
-  // Find user in DB
-  const user = users.find((u) => u.username === username);
-  if (!user) {
-    return res.status(401).send("User does not exist");
+    if (!user) {
+      return res.status(401).send("Sai tên đăng nhập hoặc mật khẩu");
+    }
+
+    // Tạo ticket
+    const ticket = "TICKET-" + uuidv4();
+    tickets.set(ticket, {
+      username: user.username,
+      fullName: user.fullName,
+      role: user.role,
+      service,
+      createdAt: Date.now(),
+    });
+
+    const redirectUrl = new URL(service);
+    redirectUrl.searchParams.set("ticket", ticket);
+    res.redirect(redirectUrl.toString());
+  } catch (error) {
+    console.error("Lỗi xác thực:", error);
+    res.status(500).send("Internal Server Error");
   }
-
-  // Check password
-  if (user.password !== password) {
-    return res.status(401).send("Wrong password");
-  }
-
-  // Create ticket
-  const ticket = "TICKET-" + uuidv4();
-  tickets.set(ticket, {
-    username: user.username,
-    fullName: user.fullName,
-    role: user.role,
-    service,
-    createdAt: Date.now(),
-  });
-
-  const redirectUrl = new URL(service);
-  redirectUrl.searchParams.set("ticket", ticket);
-  res.redirect(redirectUrl.toString());
 });
 
-// GET /sso/validate?ticket=...&service=...
-// This is what your main backend will call
+// GET /sso/validate (Giữ nguyên logic validate ticket)
 app.get("/sso/validate", (req, res) => {
   const { ticket, service } = req.query;
 
@@ -122,24 +112,24 @@ app.get("/sso/validate", (req, res) => {
     return res.status(401).json({ success: false, error: "Invalid ticket" });
   }
 
-  // Optional: ticket expiry (5 minutes)
   const MAX_AGE_MS = 5 * 60 * 1000;
   if (Date.now() - info.createdAt > MAX_AGE_MS) {
     tickets.delete(ticket);
     return res.status(401).json({ success: false, error: "Ticket expired" });
   }
 
-  // Ensure ticket used for correct service
   if (info.service !== service) {
     return res.status(401).json({ success: false, error: "Service mismatch" });
   }
 
-  // Single-use ticket
   tickets.delete(ticket);
 
+  // Trả về thông tin user đã lưu trong ticket
   return res.json({
     success: true,
     username: info.username,
+    fullName: info.fullName, // Trả thêm fullName nếu cần
+    role: info.role, // Trả thêm role nếu cần
   });
 });
 

@@ -51,6 +51,17 @@ router.get("/callback", async (req, res) => {
   }
 });
 
+router.post("/logout", (req, res) => {
+  // Xóa cookie chứa token
+  res.clearCookie("token", {
+    httpOnly: true,
+    sameSite: "lax",
+    path: "/", // Đảm bảo path trùng với lúc set cookie
+  });
+
+  return res.json({ message: "Đăng xuất thành công" });
+});
+
 // Example protected endpoint
 router.get("/me", authMiddleware, (req, res) => {
   res.json({ user: req.user });

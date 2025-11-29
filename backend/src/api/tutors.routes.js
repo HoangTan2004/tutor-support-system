@@ -21,7 +21,7 @@ router.get("/search", async (req, res) => {
         "Họ tên" as "name", 
         "Giới tính" as "gender", 
         "Chuyên Ngành" as "subject", 
-        "Khoa" as "faculty", 
+        Khoa as "faculty", 
         Email as "email"
       FROM Tutor 
       WHERE "Trạng thái" = 'Hoạt động'

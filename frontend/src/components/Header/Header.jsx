@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Header.css";
 const BACKEND_URL = "http://localhost:4000";
-const BACKEND_URL = "http://localhost:4000";
 
 export default function Header() {
   const [openLang, setOpenLang] = useState(false);
@@ -22,15 +21,12 @@ export default function Header() {
           <a href="/" className="header-home">
             Trang chủ
           </a>
-          <a href="/home" className="header-home">
-            Trang chủ
-          </a>
         </div>
 
         {/* Right side */}
         <div className="header-right">
           <div className="lang-select" onClick={() => setOpenLang(!openLang)}>
-            🌐 🌐
+            🌐
             <span>Tiếng Việt (vi)</span>
             <span className="arrow">▼</span>
           </div>

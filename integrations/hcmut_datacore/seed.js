@@ -12,7 +12,7 @@ async function seed() {
     await client.query(`
       DROP TRIGGER IF EXISTS trg_generate_dangky_id ON "Đăng ký buổi tư vấn";
       DROP SEQUENCE IF EXISTS seq_dangky;
-      DROP TABLE IF EXISTS "Đánh giá buổi học", "Tài liệu", "Đánh giá tiến bộ sinh viên", "Đăng ký buổi tư vấn", "Buổi tư vấn", "Student", "Tutor" CASCADE;
+      DROP TABLE IF EXISTS users, "Đánh giá buổi học", "Tài liệu", "Đánh giá tiến bộ sinh viên", "Đăng ký buổi tư vấn", "Buổi tư vấn", "Student", "Tutor" CASCADE;
       DROP FUNCTION IF EXISTS gio_bat_dau, gio_ket_thuc, generate_dangky_id CASCADE;
     `);
     console.log("✅ Đã dọn dẹp dữ liệu cũ.");
@@ -77,7 +77,7 @@ async function seed() {
     // LƯU Ý: Dùng VARCHAR(8) thay vì CHAR(8) để tránh lỗi padding khoảng trắng của Postgres
     // khi kiểm tra LENGTH().
     await client.query(`
-      CREATE TABLE Tutor (
+      CREATE TABLE IF NOT EXISTS "Tutor" (
           TutorID VARCHAR(8) PRIMARY KEY CHECK (LENGTH(TutorID) = 6 OR LENGTH(TutorID) = 8),
           "Họ tên" VARCHAR(100) NOT NULL,
           "Giới tính" CHAR(1) CHECK ("Giới tính" IN ('M', 'F', 'O')),
@@ -90,7 +90,7 @@ async function seed() {
           Password VARCHAR(100) NOT NULL
       );
 
-      CREATE TABLE Student (
+      CREATE TABLE IF NOT EXISTS "Student" (
           StuID VARCHAR(8) PRIMARY KEY CHECK (LENGTH(StuID) = 8),
           "Họ tên" VARCHAR(100) NOT NULL,
           "Giới tính" CHAR(1) CHECK ("Giới tính" IN ('M', 'F', 'O')),
@@ -109,7 +109,7 @@ async function seed() {
     // 4. Tạo bảng Buổi tư vấn
     // Sử dụng GENERATED ALWAYS ... STORED (Postgres 12+)
     await client.query(`
-      CREATE TABLE "Buổi tư vấn" (
+      CREATE TABLE IF NOT EXISTS "Buổi tư vấn" (
           ID SERIAL PRIMARY KEY,
           TutorID VARCHAR(8) NOT NULL REFERENCES Tutor(TutorID),
           Ngày DATE NOT NULL,
@@ -127,7 +127,7 @@ async function seed() {
 
     // 5. Tạo bảng Đăng ký, Sequence và Trigger
     await client.query(`
-      CREATE TABLE "Đăng ký buổi tư vấn" (
+      CREATE TABLE IF NOT EXISTS "Đăng ký buổi tư vấn" (
           ID VARCHAR(20) PRIMARY KEY,
           "ID_Buổi tư vấn" INTEGER NOT NULL,
           StuID VARCHAR(8) NOT NULL,
@@ -155,7 +155,7 @@ async function seed() {
 
     // 6. Tạo các bảng còn lại (Đánh giá, Tài liệu)
     await client.query(`
-      CREATE TABLE "Đánh giá tiến bộ sinh viên" (
+      CREATE TABLE IF NOT EXISTS "Đánh giá tiến bộ sinh viên" (
           "Mã số" SERIAL PRIMARY KEY,
           "Môn học" VARCHAR(100) NOT NULL,
           "Nhận xét" TEXT,
@@ -166,7 +166,7 @@ async function seed() {
           CONSTRAINT fk_student_danhgia FOREIGN KEY (StuID) REFERENCES Student(StuID)
       );
 
-      CREATE TABLE "Tài liệu" (
+      CREATE TABLE IF NOT EXISTS "Tài liệu" (
           "Mã số" SERIAL PRIMARY KEY,
           "Tiêu đề" VARCHAR(200) NOT NULL,
           "Ngày upload" DATE DEFAULT CURRENT_DATE,
@@ -175,7 +175,7 @@ async function seed() {
           CONSTRAINT fk_nguoidang FOREIGN KEY ("ID người đăng") REFERENCES Tutor(TutorID)
       );
 
-      CREATE TABLE "Đánh giá buổi học" (
+      CREATE TABLE IF NOT EXISTS "Đánh giá buổi học" (
           "Mã số" SERIAL PRIMARY KEY,
           "Chấm điểm" SMALLINT NOT NULL CHECK ("Chấm điểm" BETWEEN 1 AND 5),
           "Nhận xét" TEXT,
@@ -194,7 +194,7 @@ async function seed() {
 
     // Insert Tutor
     await client.query(`
-      INSERT INTO Tutor (TutorID, "Họ tên", "Giới tính", "Ngày sinh", Khoa, "Chuyên Ngành", Email, "Trạng thái", Username, Password) VALUES
+      INSERT INTO "Tutor" (TutorID, "Họ tên", "Giới tính", "Ngày sinh", Khoa, "Chuyên Ngành", Email, "Trạng thái", Username, Password) VALUES
       ('GV0123', 'Nguyễn Văn An', 'M', '1980-05-15', 'Công nghệ Thông tin', 'Hệ thống thông tin', 'an.nv@gv.edu.vn', 'Hoạt động', 'nguyenvanan', 'password123'),
       ('GV0456', 'Trần Thị Bích Ngọc', 'F', '1985-09-20', 'Công nghệ Thông tin', 'Khoa học máy tính', 'ngoc.ttb@gv.edu.vn', 'Hoạt động', 'tranthibichngoc', 'password123'),
       ('GV0789', 'Lê Hoàng Minh', 'M', '1978-03-10', 'Kỹ thuật Điện tử', 'Điện tử viễn thông', 'minh.lh@gv.edu.vn', 'Hoạt động', 'lehoangminh', 'password123'),
@@ -204,7 +204,7 @@ async function seed() {
 
     // Insert Student
     await client.query(`
-      INSERT INTO Student (StuID, "Họ tên", "Giới tính", "Ngày sinh", Khoa, "Chuyên Ngành", "CT đào tạo", Email, "Trạng thái học tập", Username, Password) VALUES
+      INSERT INTO "Student" (StuID, "Họ tên", "Giới tính", "Ngày sinh", Khoa, "Chuyên Ngành", "CT đào tạo", Email, "Trạng thái học tập", Username, Password) VALUES
       ('20210011', 'Nguyễn Thị Lan', 'F', '2003-02-18', 'Công nghệ Thông tin', 'Kỹ thuật phần mềm', 'Chất lượng cao', '20210011@student.edu.vn', 'Đang học', 'nguyenthilan', 'password123'),
       ('20210012', 'Lê Văn Đức', 'M', '2003-11-30', 'Công nghệ Thông tin', 'Khoa học máy tính', 'Đại trà', '20210012@student.edu.vn', 'Đang học', 'levanduc', 'password123'),
       ('20210013', 'Phạm Minh Tuấn', 'M', '2003-08-05', 'Kỹ thuật Điện tử', 'Điện tử viễn thông','Đại trà', '20210013@student.edu.vn', 'Đang học', 'phamminhtuan', 'password123'),
@@ -260,6 +260,49 @@ async function seed() {
       (5, 'Rất bổ ích, anh/chị chia sẻ kinh nghiệm phỏng vấn cực hay!', 'Kỹ năng mềm', '20210014', 2),
       (5, 'Cảm ơn anh Bảo nhiều, mình tự tin hơn hẳn khi đi phỏng vấn', 'Kỹ năng mềm', '20210012', 2);
     `);
+
+    // 8. Bảng Yêu cầu tìm gia sư (Dành cho chức năng registrations.routes.js)
+    await client.query(`
+    CREATE TABLE IF NOT EXISTS "Yêu cầu tìm gia sư" (
+    ID SERIAL PRIMARY KEY,
+    StuID VARCHAR(8) NOT NULL REFERENCES Student(StuID),
+    "Môn học" VARCHAR(100) NOT NULL,
+    "Mô tả yêu cầu" TEXT,
+    "Trạng thái" VARCHAR(20) DEFAULT 'Đang tìm' CHECK ("Trạng thái" IN ('Đang tìm', 'Đã ghép', 'Đã hủy')),
+    "Ngày tạo" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );`);
+
+    // 9. Bảng Ghép cặp (Dành cho matching.routes.js)
+    await client.query(`
+    CREATE TABLE IF NOT EXISTS "Ghép cặp" (
+    MatchID SERIAL PRIMARY KEY,
+    RequestID INTEGER REFERENCES "Yêu cầu tìm gia sư"(ID),
+    TutorID VARCHAR(8) NOT NULL REFERENCES Tutor(TutorID),
+    StuID VARCHAR(8) NOT NULL REFERENCES Student(StuID),
+    "Trạng thái" VARCHAR(20) DEFAULT 'Chờ xác nhận' CHECK ("Trạng thái" IN ('Chờ xác nhận', 'Đã chấp nhận', 'Từ chối')),
+    "Ngày ghép" TIMESTAMP DEFAULT CURRENT_TIMESTAMP);
+    `);
+
+    // 10. View "users" (Cầu nối cho hệ thống Auth/SSO cũ)
+    // Giúp hàm verifyUserCredentials hoạt động mà không cần sửa code
+    // Map các cột từ Student/Tutor sang chuẩn: username, password, full_name, role
+    await client.query(`
+CREATE OR REPLACE VIEW users AS
+SELECT 
+    Username AS username,
+    Password AS password,
+    "Họ tên" AS full_name,
+    'student' AS role,
+    StuID AS original_id
+FROM "Student"
+UNION ALL
+SELECT 
+    Username AS username,
+    Password AS password,
+    "Họ tên" AS full_name,
+    'tutor' AS role,
+    TutorID AS original_id
+FROM "Tutor"`);
 
     // Commit transaction nếu mọi thứ thành công
     await client.query("COMMIT");

@@ -6,13 +6,26 @@ const router = Router();
 router.use(authMiddleware);
 
 /**
- * 1. Search tutors (GET /api/tutors/search)
- * Query params: ?subject=Web&name=An
+ * 1. Search/List Tutors (GET /api/tutors/search)
+ * - Lấy danh sách Tutor để sinh viên xem và chọn.
+ * - Hỗ trợ lọc theo môn (subject) hoặc tên (name).
+ * - Nếu không truyền tham số: Trả về toàn bộ danh sách.
  */
 router.get("/search", async (req, res) => {
   const { subject, name } = req.query;
   try {
-    let sql = `SELECT * FROM Tutor WHERE "Trạng thái" = 'Hoạt động'`;
+    // Select và Alias lại tên cột cho đẹp (camelCase)
+    let sql = `
+      SELECT 
+        TutorID as "id", 
+        "Họ tên" as "name", 
+        "Giới tính" as "gender", 
+        "Chuyên Ngành" as "subject", 
+        "Khoa" as "faculty", 
+        Email as "email"
+      FROM Tutor 
+      WHERE "Trạng thái" = 'Hoạt động'
+    `;
     const params = [];
 
     if (subject) {
@@ -24,9 +37,12 @@ router.get("/search", async (req, res) => {
       sql += ` AND "Họ tên" ILIKE $${params.length}`;
     }
 
+    sql += ` ORDER BY "Họ tên" ASC`;
+
     const result = await db.query(sql, params);
     res.json({ data: result.rows });
   } catch (err) {
+    console.error("Error searching tutors:", err);
     res.status(500).json({ message: err.message });
   }
 });

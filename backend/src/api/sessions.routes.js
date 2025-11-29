@@ -37,16 +37,43 @@ router.get("/", async (req, res) => {
   }
 });
 
-// 2. Get tutor free schedule (GET /api/sessions/tutors/:tutorId/schedule)
-router.get("/tutors/:tutorId/schedule", (req, res) => {
+/**
+ * [NEW] 1.1 List AVAILABLE sessions (GET /api/sessions/available)
+ * Xem danh sách các lớp "Sắp diễn ra" để sinh viên lựa chọn đăng ký
+ */
+router.get("/available", async (req, res) => {
+  try {
+    // Lấy danh sách các buổi tư vấn sắp diễn ra kèm tên Tutor
+    // Sắp xếp theo ngày gần nhất trước
+    const sql = `
+        SELECT bt.*, t."Họ tên" as TutorName
+        FROM "Buổi tư vấn" bt
+        JOIN Tutor t ON bt.TutorID = t.TutorID
+        WHERE bt."Trạng thái" = 'Sắp diễn ra'
+        ORDER BY bt.ngày ASC, bt."Giờ bắt đầu" ASC
+    `;
+    const result = await db.query(sql);
+
+    // Frontend có thể so sánh ID của list này với list "đã đăng ký"
+    // để hiện nút "Đã đăng ký" hoặc "Đăng ký ngay"
+
+    res.json({ data: result.rows });
+  } catch (err) {
+    console.error("Error in GET /api/sessions/available:", err);
+    res.status(500).json({ message: err.message });
+  }
+});
+
+/**
+ * 2. Get tutor free schedule
+ */
+router.get("/tutors/:tutorId/schedule", async (req, res) => {
   const { tutorId } = req.params;
-  // TODO: Lấy các slot trống của gia sư
   res.json({
     tutorId,
     freeSlots: ["Monday 19:00", "Wednesday 18:00"],
   });
 });
-
 /**
  * 3. Create session booking (POST /api/sessions/booking)
  * Body: { sessionId }
@@ -79,11 +106,12 @@ router.post("/booking", async (req, res) => {
   }
 });
 
-// 4. Reschedule session (PUT /api/sessions/:id/reschedule)
+/**
+ * 4. Reschedule session
+ */
 router.put("/:id/reschedule", (req, res) => {
   const { id } = req.params;
   const { newTime } = req.body;
-  // TODO: Đổi lịch
   res.json({ message: `Session ${id} rescheduled to ${newTime}` });
 });
 

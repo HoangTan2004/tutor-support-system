@@ -7,13 +7,18 @@ export default function Header() {
   const [openLang, setOpenLang] = useState(false);
   const navigate = useNavigate();
 
+  const handleLogin = () => {
+    // Chuyển hướng hoàn toàn sang server backend để bắt đầu luồng SSO
+    window.location.href = `${BACKEND_URL}/auth/login`;
+  };
+
   return (
     <header className="header">
       <div className="header-container">
         {/* Left side */}
         <div className="header-left">
           <img src="/public/LogoBK.png" className="header-logo" alt="Logo" />
-          <a href="/" className="header-home">
+          <a href="/home" className="header-home">
             Trang chủ
           </a>
         </div>
@@ -33,10 +38,7 @@ export default function Header() {
             </div>
           )}
 
-          <button
-            className="header-login-btn"
-            onClick={() => navigate(`${BACKEND_URL}/auth/login`)}
-          >
+          <button className="header-login-btn" onClick={handleLogin}>
             Đăng nhập
           </button>
         </div>

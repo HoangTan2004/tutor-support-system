@@ -22,7 +22,7 @@ import TutorList from "./components/TutorList/TutorList";
 import History from "./components/History/History";
 import StudentRegistration from "./components/StudentRegistration/StudentRegistration";
 
-import ApiTestPage from "./components/ApiTestPage/ApiTestPage";
+import { ApiTestPage, StudentConnectDemo } from "./components/ApiTestPage/";
 
 const App = () => {
   const [user, setUser] = useState(null);
@@ -156,6 +156,7 @@ const App = () => {
             />
             {/* --- THÊM ROUTE TEST API --- */}
             <Route path="/test-api" element={<ApiTestPage />} />
+            <Route path="/student-demo" element={<StudentConnectDemo />} />
           </Routes>
         </div>
 

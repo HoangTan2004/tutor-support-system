@@ -1,14 +1,20 @@
-import './App.css';
+import "./App.css";
 import React, { useState, useEffect } from "react";
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 
 import Header from "./components/Header/Header";
-import Footer from './components/Footer/Footer';
+import Footer from "./components/Footer/Footer";
 import HomeContent from "./components/HomeContent/HomeContent";
-import Login from './components/Login/Login';
+import Login from "./components/Login/Login";
 import HomeAuthenticated from "./components/HomeAuthenticated/HomeAuthenticated";
-import ForgotPassword from './components/ForgotPassword/ForgotPassword';
+import ForgotPassword from "./components/ForgotPassword/ForgotPassword";
 import UserProfile from "./components/UserProfile/UserProfile";
+import LoginSuccess from "./components/LoginSuccess/LoginSuccess";
 
 const App = () => {
   const [user, setUser] = useState(null);
@@ -41,17 +47,37 @@ const App = () => {
 
   return (
     <Router>
-      <div className='app'>
+      <div className="app">
         <Header user={user} />
 
         <div style={{ paddingTop: "90px" }}>
           <Routes>
             <Route path="/" element={<HomeContent />} />
-            <Route path="/login" element={<Login user={user} setUser={setUser} />} />
+            <Route
+              path="/login"
+              element={<Login user={user} setUser={setUser} />}
+            />
+            {/* Added new login success path to callback to frontend from backend */}
+            <Route
+              path="/login-success"
+              element={<LoginSuccess setUser={setUser} />}
+            />
             <Route path="/forgot" element={<ForgotPassword />} />
-            <Route path="/home" element={user ? <HomeAuthenticated username={user} /> : <Navigate to="/login" />} />
+            <Route
+              path="/home"
+              element={
+                user ? (
+                  <HomeAuthenticated username={user} />
+                ) : (
+                  <Navigate to="/login" />
+                )
+              }
+            />
             <Route path="/userprofile" element={<UserProfile />} />
-            <Route path="*" element={<Navigate to={user ? "/home" : "/login"} />} />
+            <Route
+              path="*"
+              element={<Navigate to={user ? "/home" : "/login"} />}
+            />
           </Routes>
         </div>
 
@@ -59,6 +85,6 @@ const App = () => {
       </div>
     </Router>
   );
-}
+};
 
 export default App;

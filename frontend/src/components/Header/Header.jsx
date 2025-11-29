@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Header.css";
 const BACKEND_URL = "http://localhost:4000";
+const BACKEND_URL = "http://localhost:4000";
 
 export default function Header() {
   const [openLang, setOpenLang] = useState(false);
@@ -18,6 +19,9 @@ export default function Header() {
         {/* Left side */}
         <div className="header-left">
           <img src="/public/LogoBK.png" className="header-logo" alt="Logo" />
+          <a href="/" className="header-home">
+            Trang chủ
+          </a>
           <a href="/home" className="header-home">
             Trang chủ
           </a>
@@ -26,7 +30,7 @@ export default function Header() {
         {/* Right side */}
         <div className="header-right">
           <div className="lang-select" onClick={() => setOpenLang(!openLang)}>
-            🌐
+            🌐 🌐
             <span>Tiếng Việt (vi)</span>
             <span className="arrow">▼</span>
           </div>
@@ -38,7 +42,10 @@ export default function Header() {
             </div>
           )}
 
-          <button className="header-login-btn" onClick={handleLogin}>
+          <button
+            className="header-login-btn"
+            onClick={() => navigate("/login")}
+          >
             Đăng nhập
           </button>
         </div>

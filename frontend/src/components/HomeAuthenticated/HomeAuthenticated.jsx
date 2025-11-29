@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "../Header/Header.css";
 import "../HomeContent/HomeContent.css";
 import axios from "axios";
@@ -46,15 +46,15 @@ export default function HomeAuthenticated({ username }) {
           {/* LEFT SIDE */}
           <div className="header-left">
             <img src="/public/LogoBK.png" className="header-logo" alt="Logo" />
-            <a href="/" className="header-home">
+            <Link to="/" className="header-home">
               Trang chủ
-            </a>
-            <a href="/tutors" className="header-home">
+            </Link>
+            <Link to="/tutors" className="header-home">
               Danh sách Tutor
-            </a>
-            <a href="/history" className="header-home">
+            </Link>
+            <Link to="/history" className="header-home">
               Lịch sử đăng ký
-            </a>
+            </Link>
           </div>
 
           {/* RIGHT SIDE */}

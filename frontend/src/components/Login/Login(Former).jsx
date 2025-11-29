@@ -10,10 +10,12 @@ export default function LoginBox({ user, setUser }) {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (user) {
+    const session = JSON.parse(localStorage.getItem("userSession"));
+    if (user && session?.user_role) {
       navigate("/home");
     }
   }, [user, navigate]);
+
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -28,8 +30,10 @@ export default function LoginBox({ user, setUser }) {
 
     // create session
     const expires = Date.now() + 30 * 60 * 1000; // 30m
-    localStorage.setItem("userSession", JSON.stringify({ username: user.username, expires }));
+    localStorage.setItem("userSession", JSON.stringify({ username: user.username, user_role: user.user_role, expires }));
 
+    setUser(foundUser.username);
+    setUserRole(foundUser.user_role);
     navigate("/home");      // chuyển qua HomeAuthenticated
   };
 

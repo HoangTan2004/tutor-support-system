@@ -27,14 +27,14 @@ app.use(express.json());
 // Auth routes
 app.use("/auth", authRoutes);
 
-app.use("/users", usersRoutes);
-app.use("/registrations", registrationRoutes);
-app.use("/tutors", tutorRoutes);
-app.use("/matching", matchingRoutes);
-app.use("/sessions", sessionRoutes);
-app.use("/feedback", feedbackRoutes);
-app.use("/documents", documentRoutes);
-app.use("/admin", adminRoutes);
+app.use("/api/users", usersRoutes);
+app.use("/api/registrations", registrationRoutes);
+app.use("/api/tutors", tutorRoutes);
+app.use("/api/matching", matchingRoutes);
+app.use("/api/sessions", sessionRoutes);
+app.use("/api/feedback", feedbackRoutes);
+app.use("/api/documents", documentRoutes);
+app.use("/api/admin", adminRoutes);
 
 // Simple test route
 app.get("/", (req, res) => {

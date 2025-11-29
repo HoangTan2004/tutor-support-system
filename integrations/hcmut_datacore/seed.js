@@ -12,7 +12,7 @@ async function seed() {
     await client.query(`
       DROP TRIGGER IF EXISTS trg_generate_dangky_id ON "Đăng ký buổi tư vấn";
       DROP SEQUENCE IF EXISTS seq_dangky;
-      DROP TABLE IF EXISTS users, "Đánh giá buổi học", "Tài liệu", "Đánh giá tiến bộ sinh viên", "Đăng ký buổi tư vấn", "Buổi tư vấn", "Student", "Tutor" CASCADE;
+      DROP TABLE IF EXISTS users, "Đánh giá buổi học", "Tài liệu", "Đánh giá tiến bộ sinh viên", "Đăng ký buổi tư vấn", "Buổi tư vấn", "Student", "Tutor", "Admin" CASCADE;
       DROP FUNCTION IF EXISTS gio_bat_dau, gio_ket_thuc, generate_dangky_id CASCADE;
     `);
     console.log("✅ Đã dọn dẹp dữ liệu cũ.");
@@ -103,6 +103,14 @@ async function seed() {
           Username VARCHAR(50) NOT NULL UNIQUE,
           Password VARCHAR(100) NOT NULL
       );
+      -- THÊM: Bảng Admin
+      CREATE TABLE IF NOT EXISTS Admin (
+          AdminID VARCHAR(8) PRIMARY KEY,
+          "Họ tên" VARCHAR(100) NOT NULL,
+          Email VARCHAR(100) NOT NULL UNIQUE,
+          Username VARCHAR(50) NOT NULL UNIQUE,
+          Password VARCHAR(100) NOT NULL
+    );
     `);
     console.log("✅ Đã tạo bảng Users (Tutor & Student).");
 
@@ -210,6 +218,12 @@ async function seed() {
       ('20210013', 'Phạm Minh Tuấn', 'M', '2003-08-05', 'Kỹ thuật Điện tử', 'Điện tử viễn thông','Đại trà', '20210013@student.edu.vn', 'Đang học', 'phamminhtuan', 'password123'),
       ('20210014', 'Hoàng Thị Hồng', 'F', '2003-06-22', 'Công nghệ Thông tin', 'An toàn thông tin', 'Chất lượng cao', '20210014@student.edu.vn', 'Đang học', 'hoangthihong', 'password123'),
       ('20210015', 'Vũ Văn Hùng', 'M', '2003-09-14', 'Công nghệ Thông tin', 'Kỹ thuật phần mềm', 'Đại trà', '20210015@student.edu.vn', 'Đang học', 'vuvanhung', 'password123');
+    `);
+
+    // Insert Admin
+    await client.query(`
+      INSERT INTO Admin (AdminID, "Họ tên", Email, Username, Password) VALUES
+      ('AD0001', 'Quản Trị Viên Hệ Thống', 'admin@hcmut.edu.vn', 'admin', 'password123');
     `);
 
     // Insert Buổi tư vấn

@@ -1,28 +1,29 @@
 import { Router } from "express";
 import { authMiddleware } from "./auth.middleware.js";
+import db from "../db.js";
 
 const router = Router();
 router.use(authMiddleware);
 
 // Middleware kiểm tra quyền Admin cho toàn bộ file này
 router.use((req, res, next) => {
-  if (req.user && req.user.role === "admin") {
+  // Logic giả định: user 'admin' hoặc check DB
+  if (req.user.username === "admin" || req.user.role === "admin") {
     next();
   } else {
     res.status(403).json({ message: "Admin access required" });
   }
 });
 
-// 1. List users (GET /api/admin/users)
-router.get("/users", (req, res) => {
-  // TODO: Lấy toàn bộ users
-  res.json({
-    count: 100,
-    data: [
-      { id: 1, username: "student1" },
-      { id: 2, username: "teacher1" },
-    ],
-  });
+// 1. List all users
+router.get("/users", async (req, res) => {
+  try {
+    // Sử dụng View 'users' đã tạo trong seed.js
+    const result = await db.query(`SELECT * FROM users ORDER BY username ASC`);
+    res.json({ count: result.rowCount, data: result.rows });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
 });
 
 // 2. Approve tutor (POST /api/admin/tutors/approve)
@@ -41,12 +42,18 @@ router.get("/tutors", (req, res) => {
 });
 
 // 4. System statistics (GET /api/admin/statistics)
-router.get("/statistics", (req, res) => {
-  res.json({
-    totalUsers: 200,
-    activeMatches: 50,
-    sessionsThisMonth: 120,
-  });
+router.get("/statistics", async (req, res) => {
+  try {
+    const usersCount = await db.query(`SELECT COUNT(*) FROM users`);
+    const sessionsCount = await db.query(`SELECT COUNT(*) FROM "Buổi tư vấn"`);
+
+    res.json({
+      totalUsers: usersCount.rows[0].count,
+      totalSessions: sessionsCount.rows[0].count,
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
 });
 
 export default router;

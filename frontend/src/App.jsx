@@ -13,18 +13,20 @@ import HomeContent from "./components/HomeContent/HomeContent";
 import Login from "./components/Login/Login";
 import LoginBox from "./components/Login/Login(Former)";
 import HomeAuthenticated from "./components/HomeAuthenticated/HomeAuthenticated";
-import HomeTutor from './components/HomeTutor/HomeTutor';
+import HomeTutor from "./components/HomeTutor/HomeTutor";
 import ForgotPassword from "./components/ForgotPassword/ForgotPassword";
 import UserProfile from "./components/UserProfile/UserProfile";
 import LoginSuccess from "./components/LoginSuccess/LoginSuccess";
-import TutorProfile from './components/TutorProfile/TutorProfile';
-import TutorList from './components/TutorList/TutorList';
+import TutorProfile from "./components/TutorProfile/TutorProfile";
+import TutorList from "./components/TutorList/TutorList";
 import History from "./components/History/History";
 import StudentRegistration from "./components/StudentRegistration/StudentRegistration";
 
+import ApiTestPage from "./components/ApiTestPage/ApiTestPage";
+
 const App = () => {
   const [user, setUser] = useState(null);
-  const [userRole, setUserRole] = useState(null); 
+  const [userRole, setUserRole] = useState(null);
 
   useEffect(() => {
     const session = JSON.parse(localStorage.getItem("userSession"));
@@ -92,18 +94,68 @@ const App = () => {
             />
 
             {/* Profile */}
-            <Route path="/userprofile" element={user && userRole === "student" ? <UserProfile /> : <Navigate to="/login" />} />
-            <Route path="/tutorprofile" element={user && userRole === "tutor" ? <TutorProfile /> : <Navigate to="/login" />} />
+            <Route
+              path="/userprofile"
+              element={
+                user && userRole === "student" ? (
+                  <UserProfile />
+                ) : (
+                  <Navigate to="/login" />
+                )
+              }
+            />
+            <Route
+              path="/tutorprofile"
+              element={
+                user && userRole === "tutor" ? (
+                  <TutorProfile />
+                ) : (
+                  <Navigate to="/login" />
+                )
+              }
+            />
 
             {/* Student-only pages */}
-            <Route path="/tutors" element={user && userRole === "student" ? <TutorList /> : <Navigate to="/login" />} />
-            <Route path="/history" element={user && userRole === "student" ? <History /> : <Navigate to="/login" />} />
+            <Route
+              path="/tutors"
+              element={
+                user && userRole === "student" ? (
+                  <TutorList />
+                ) : (
+                  <Navigate to="/login" />
+                )
+              }
+            />
+            <Route
+              path="/history"
+              element={
+                user && userRole === "student" ? (
+                  <History />
+                ) : (
+                  <Navigate to="/login" />
+                )
+              }
+            />
 
             {/* Tutor-only pages */}
-            <Route path="/student-registration" element={user && userRole === "tutor" ? <StudentRegistration /> : <Navigate to="/login" />} />
+            <Route
+              path="/student-registration"
+              element={
+                user && userRole === "tutor" ? (
+                  <StudentRegistration />
+                ) : (
+                  <Navigate to="/login" />
+                )
+              }
+            />
 
             {/* fallback route */}
-            <Route path="*" element={<Navigate to={user ? "/home" : "/login"} />} />
+            <Route
+              path="*"
+              element={<Navigate to={user ? "/home" : "/login"} />}
+            />
+            {/* --- THÊM ROUTE TEST API --- */}
+            <Route path="/test-api" element={<ApiTestPage />} />
           </Routes>
         </div>
 

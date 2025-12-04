@@ -88,7 +88,6 @@ export default function HomeAuthenticated({ username }) {
                 <button onClick={() => navigate("/userprofile")}>
                   Hồ sơ cá nhân
                 </button>
-                <button onClick={() => navigate("/settings")}>Cài đặt</button>
                 <button onClick={handleLogout}>Đăng xuất</button>
               </div>
             )}

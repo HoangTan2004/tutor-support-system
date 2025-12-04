@@ -11,29 +11,29 @@ export default function LoginBox({ user, setUser }) {
 
   useEffect(() => {
     const session = JSON.parse(localStorage.getItem("userSession"));
-    if (user && session?.user_role) {
+    if (session?.username) {
       navigate("/home");
     }
-  }, [user, navigate]);
+  }, [navigate]);
 
 
   const handleSubmit = (e) => {
     e.preventDefault();
     // check fake database
-    const user = MOCK_USERS.find(u => u.username === username && u.password === password);
-    if (!user) {
+    const foundUser = MOCK_USERS.find(
+      u => u.username === username && u.password === password
+    );
+    if (!foundUser) {
       setError("Đăng nhập không thành công. Vui lòng thử lại");
       return;
     }
     // success
-    setUser(user.username);
+    setUser(foundUser.username);
 
     // create session
     const expires = Date.now() + 30 * 60 * 1000; // 30m
-    localStorage.setItem("userSession", JSON.stringify({ username: user.username, user_role: user.user_role, expires }));
+    localStorage.setItem("userSession", JSON.stringify({ username: foundUser.username, user_role: foundUser.user_role, expires }));
 
-    setUser(foundUser.username);
-    setUserRole(foundUser.user_role);
     navigate("/home");      // chuyển qua HomeAuthenticated
   };
 

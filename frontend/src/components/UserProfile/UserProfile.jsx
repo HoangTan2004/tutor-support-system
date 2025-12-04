@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "./UserProfile.css";
 
 export default function UserProfile() {
@@ -52,9 +52,9 @@ export default function UserProfile() {
         <div className="header-container">
           <div className="header-left">
             <img src="/public/LogoBK.png" className="header-logo" alt="Logo" />
-            <a href="/" className="header-home">Trang chủ</a>
-            <a href="/tutors" className="header-home">Danh sách Tutor</a>
-            <a href="/history" className="header-home">Lịch sử đăng ký</a>
+            <Link to="/home" className="header-home">Trang chủ</Link>
+            <Link to="/tutors" className="header-home">Danh sách Tutor</Link>
+            <Link to="/history" className="header-home">Lịch sử đăng ký</Link>
           </div>
 
           <div className="header-right">
@@ -73,7 +73,6 @@ export default function UserProfile() {
             {openUserMenu && (
               <div className="user-dropdown">
                 <button onClick={() => navigate("/userprofile")}>Hồ sơ cá nhân</button>
-                <button onClick={() => navigate("/settings")}>Cài đặt</button>
                 <button onClick={handleLogout}>Đăng xuất</button>
               </div>
             )}

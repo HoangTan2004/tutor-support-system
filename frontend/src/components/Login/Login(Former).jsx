@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { MOCK_USERS } from "../../data/mockup_user.js";
 import "./Login.css";
 
-export default function LoginBox({ user, setUser }) {
+export default function LoginBox({ user, setUser, setUserRole }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -11,9 +11,14 @@ export default function LoginBox({ user, setUser }) {
 
   useEffect(() => {
     const session = JSON.parse(localStorage.getItem("userSession"));
+    if (session?.expires && session.expires <= Date.now()) {
+      localStorage.removeItem("userSession");
+    }
+
+    // session còn hạn → redirect
     if (session?.username) {
       navigate("/home");
-    }
+    } 
   }, [navigate]);
 
 
@@ -29,6 +34,7 @@ export default function LoginBox({ user, setUser }) {
     }
     // success
     setUser(foundUser.username);
+    setUserRole(foundUser.user_role);
 
     // create session
     const expires = Date.now() + 30 * 60 * 1000; // 30m

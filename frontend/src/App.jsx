@@ -65,7 +65,7 @@ const App = () => {
             <Route path="/" element={<HomeContent />} />
             <Route
               path="/login"
-              element={<LoginBox user={user} setUser={setUser} />}
+              element={<LoginBox user={user} setUser={setUser} setUserRole={setUserRole} />}
             />
             {/* Added new login success path to callback to frontend from backend */}
             <Route
